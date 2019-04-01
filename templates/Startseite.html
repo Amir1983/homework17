@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block body %}
+{% if name %}
+<br><br>
+<h1 class="textcenter">Hallo {{name}}!</h1>
+{% endif %}
+<br><br><br><br>
+<h1 class="textcenter">Finde die geheime Zahl</h1>
+<br><br><br><br><br>
+<div style="width: 190px; margin: auto;">
+<form method="post" action="/geheimzahl">
+    <input type="text" name="zahl" placeholder="Gib hier deine Zahl ein" />
+    <br><br>
+    <button type="submit">bestätigen</button>
+
+</form>
+
+</div>
+
+
+{% endblock %}
