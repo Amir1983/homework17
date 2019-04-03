@@ -1,9 +1,9 @@
 runtime: python37
-
+env_variables:
+  GAE_DATABASE: "datastore"
 handlers:
 - url: /static
   static_dir: static
 - url: /.*
   script: auto
-  env_variables:
-  GAE_DATABASE: "datastore"
+
