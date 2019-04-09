@@ -1,18 +1,48 @@
-from flask import Flask, render_template, request,  make_response
+from flask import Flask, render_template, request,  make_response,  redirect, url_for
+from models import User
 import random
 
 app = Flask(__name__)
 
 @app.route("/")
 def hello():
-    geheimzahl = request.cookies.get("geheimzahl")
-    response = make_response(render_template("Startseite.html"))
+    email_address = request.cookies.get("email")
 
-    if not geheimzahl:
-        neue_geheimzahl = random.randint(1, 10)
-        response.set_cookie("geheimzahl", str(neue_geheimzahl))
+    if email_address:
+
+        user = User.fetch_one(query=["email", "==", email_address])
+
+    else:
+
+        user = None
+
+    return render_template("Startseite.html", user=user)
+@app.route("/anmeldung", methods=["POST"])
+def startseite():
+    name = request.form.get("name")
+
+    email = request.form.get("email")
+
+
+    geheimzahl = random.randint(1, 10)
+
+
+    user = User.fetch_one(query=["email", "==", email])
+
+    if not user:
+
+
+        user = User(name=name, email=email, geheimzahl=geheimzahl)
+
+        user.create()
+
+
+    response = make_response(redirect(url_for('hello')))
+
+    response.set_cookie("email", email)
 
     return response
+
 
 @app.route("/aboutus")
 def aboutus():
@@ -21,44 +51,31 @@ def aboutus():
 
 @app.route("/geheimzahl", methods=["POST"])
 def geheimzahl():
-    zahl = int(request.form.get("zahl","0"))
-    geheimzahl = int(request.cookies.get("geheimzahl"))
+    zahl = int(request.form.get("zahl"))
 
-    if geheimzahl == zahl:
-        message = "Super! Die Geheime Nummer: {0}".format(str(geheimzahl))
-
-        response = make_response(render_template("gewonnen.html", message=message))
-
-        response.set_cookie("geheimzahl", str(random.randint(1, 10)))  # set the new secret number
-
-        return response
-    elif zahl > geheimzahl:
-
-        message = "Deine Zahl ist nicht Korrekt... nimm eine kleinere Zahl."
-
-        return render_template("geheimzahl.html", message=message)
-
-    elif zahl < geheimzahl:
-
-        message = "Deine Zahl ist nicht Korrekt... nimm eine größere Zahl.."
-
-        return render_template("geheimzahl.html", message=message)
+    email_address = request.cookies.get("email")
 
 
-@app.route("/gewonnen", methods=["POST"] )
-def winner():
-    user_name = request.cookies.get("user_name")
-    name = request.form.get("name")
-    nachname = request.form.get("nachname")
-    adresse = request.form.get("adresse")
+    user = User.fetch_one(query=["email", "==", email_address])
 
-    print(name)
-    print(nachname)
-    print(adresse)
-    response = make_response(render_template("Startseite.html", name=user_name ))
-    response.set_cookie("user_name", name)
-    return response
+    if zahl == user.geheimzahl:
 
+        message = "Gewoonen, die Geheime Zahl lautet: {0}".format(str(zahl))
+
+        neue_geheimzahl = random.randint(1, 10)
+
+
+        User.edit(obj_id=user.id, geheimzahl=neue_geheimzahl)
+
+    elif zahl > user.geheimzahl:
+
+        message = "Deine Zahl ist zu groß... gib was kleineres ein!."
+
+    elif zahl < user.geheimzahl:
+
+        message = "Deine Zahl ist zu klein... gib was größeres ein!."
+
+    return render_template("geheimzahl.html", message=message)
 
 if __name__ =='__main__':
     app.run(debug=True)

@@ -1,17 +1,15 @@
 {% extends "base.html" %}
 
-{% block body %}
-<h1 class="textcenter">Gewonnen!!!!</h1>
-
-<div style="width: 260px; margin: auto;">
-<form method="post" action="/gewonnen">
-    <input type="text" name="name" placeholder="Vorname"/>
-    <input type="text" name="nachname" placeholder="Nachname"/>
-    <input type="text" name="adresse" placeholder="Adresse" />
-
-    <button type="submit">bestätigen</button>
-</form>
-</div>
+{% block title %}Success{% endblock title %}
 
 
-{% endblock %}
+
+{% block content %}
+
+<p>{{ message }}</p>
+
+
+
+<p><a href="/">Züruck und neu Raten</a></p>
+
+{% endblock content %}

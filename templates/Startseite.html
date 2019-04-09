@@ -1,22 +1,35 @@
 {% extends "base.html" %}
 
-{% block body %}
-{% if name %}
-<br><br>
-<h1 class="textcenter">Hallo {{name}}!</h1>
+{% block content %}
+
+{% if user and user.geheimzahl %}
+
+    <form method="post" action="/geheimzahl">
+
+        <input type="text" name="zahl" placeholder="Gib hier deine Zahl ein">
+
+        <br>
+
+
+
+        <button type="submit">Bestätigen</button>
+
+    </form>
+
+{% else %}
+
+    <form method="post" action="/anmeldung">
+
+        <input type="text" name="name" placeholder="Name"><br>
+
+        <input type="email" name="email" placeholder="Email Adresse"><br>
+
+
+
+        <button>Bestätigen</button>
+
+    </form>
+
 {% endif %}
-<br><br><br><br>
-<h1 class="textcenter">Finde die geheime Zahl</h1>
-<br><br><br><br><br>
-<div style="width: 190px; margin: auto;">
-<form method="post" action="/geheimzahl">
-    <input type="text" name="zahl" placeholder="Gib hier deine Zahl ein" />
-    <br><br>
-    <button type="submit">bestätigen</button>
 
-</form>
-
-</div>
-
-
-{% endblock %}
+{% endblock content %}
